@@ -38,8 +38,61 @@ void part1(const vector<pair<int, int>> pageOrderingRules, const vector<vector<i
     cout << "part 1: " << result << endl;
 }
 
-void part2()
+bool isValid(const vector<pair<int, int>> pageOrderingRules, const vector<int> update)
 {
+    bool isValid = true;
+        
+        // Check the rules iteratively for the line
+        for (const pair<int, int> &rule : pageOrderingRules)
+        {
+            // Check that both values are in the line
+
+            if (std::find(update.begin(), update.end(), rule.first) != update.end() && 
+                std::find(update.begin(), update.end(), rule.second) != update.end())
+            {
+                // Check the order of the numbers
+                ptrdiff_t x1 = distance(update.begin(), std::find(update.begin(), update.end(), rule.first));
+                ptrdiff_t x2 = distance(update.begin(), std::find(update.begin(), update.end(), rule.second));
+                if (x2 <= x1) isValid = false;
+            }
+        }
+
+    return isValid;
+}
+
+void part2(const vector<pair<int, int>> pageOrderingRules, vector<vector<int>> updates)
+{
+    int result = 0;
+
+    for (auto &update : updates)
+    {
+        // Skip if already valid
+        if (isValid(pageOrderingRules, update)) continue;
+
+        vector<int> x;
+        // iteratively switch around the numbers
+        for (int i = 0; i < update.size(); i++)
+        {
+            x.push_back(update.at(i));
+            if (isValid(pageOrderingRules, x))
+            {
+                continue;
+            }
+            else
+            {
+                for (int a = -1; a > x.size(); a--)
+                {
+                    // Switch around from the back until valid
+                    swap(x.end()[a], x.end()[a-1]);                    
+                    if (isValid(pageOrderingRules, x)) break;
+                }
+            }
+
+        }
+        result += x.at(x.size()/2);
+    }
+
+    cout << "part 2: " << result << endl;
 }
 
 int main(void)
@@ -76,7 +129,8 @@ int main(void)
         }
     }
 
-    part1(pageOrderingRules, updates);
+    // part1(pageOrderingRules, updates);
+    part2(pageOrderingRules, updates);
 
     return 0;
 }
