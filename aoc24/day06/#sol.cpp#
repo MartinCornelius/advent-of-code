@@ -37,7 +37,7 @@ void part1(vector<string> grid)
 
 	pair<int, int> guardDirection = {-1,0};
 	bool leftArea = false;
-
+	
 	while (!leftArea)
 	{
 		// Detect leaving map
